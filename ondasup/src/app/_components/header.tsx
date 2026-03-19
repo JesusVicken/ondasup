@@ -59,7 +59,7 @@ export default function Header() {
                         className="flex items-center h-full relative z-50 transition-transform hover:scale-105 shrink-0"
                     >
                         <Image
-                            src="/ondasuplogo.png" // Usa SEMPRE a mesma imagem original (branca)
+                            src="/ondasupLogo.png" // Usa SEMPRE a mesma imagem original (branca)
                             alt="OndaSup - Soluções em Impacto Social"
                             width={160}
                             height={55}

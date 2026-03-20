@@ -33,7 +33,7 @@ export default function SolucoesPage() {
             title: 'Team Building e SyncPaddle',
             desc: 'Vivências corporativas baseadas na cooperação e inteligência coletiva. Utilizamos a RemoTerapia para alinhar expectativas e fortalecer o clima organizacional.',
             icon: UsersFour,
-            image: '/remoday.jpeg',
+            image: '/filhos1.jpg',
             tag: 'Corporativo'
         },
         {
@@ -47,7 +47,7 @@ export default function SolucoesPage() {
             title: 'Formação e Conteúdo',
             desc: 'Palestras, workshops e programas educacionais focados em desenvolvimento humano e inovação social.',
             icon: GraduationCap,
-            image: '/transicao.jpeg',
+            image: '/premioMulher.jpeg',
             tag: 'Educação'
         }
     ]

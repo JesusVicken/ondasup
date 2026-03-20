@@ -1,451 +1,279 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import Image from 'next/image'
-import { Play, SpeakerSimpleX, SpeakerSimpleHigh, InstagramLogo, WhatsappLogo, X, Pause, ArrowDown } from '@phosphor-icons/react'
+import Link from 'next/link'
+import { 
+    Heart, 
+    Users, 
+    HandHeart, 
+    GlobeHemisphereWest, 
+    Medal, 
+    SealCheck, 
+    Star, 
+    Briefcase,
+    ArrowRight
+} from '@phosphor-icons/react/dist/ssr'
 
-gsap.registerPlugin(ScrollTrigger)
+// Animações
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 
-const portfolioMedia = [
-    // Fotos
-    { src: '/arruas-about.jpg', type: 'image', alt: 'Ricardo Arruas - Tatuador Profissional', category: 'Artista' },
-    { src: '/tatoo1.jpeg', type: 'image', alt: 'Tatuagem Realista - Detalhe impressionante', category: 'Realismo' },
-    { src: '/tatoo3.jpeg', type: 'image', alt: 'Tatuagem Realista - Traços precisos', category: 'Realismo' },
-    { src: '/tatoo4.jpeg', type: 'image', alt: 'Realismo com sombras bem trabalhadas', category: 'Realismo' },
-    { src: '/tatoo5.jpeg', type: 'image', alt: 'Tatuagem realista com profundidade 3D', category: 'Realismo' },
-    { src: '/tatoo6.jpeg', type: 'image', alt: 'Tatuagem realista com profundidade 3D', category: 'Realismo' },
-    { src: '/tatoo7.jpeg', type: 'image', alt: 'Tatuagem realista com profundidade 3D', category: 'Realismo' },
-
-    // Vídeos
-    { src: '/arruas1.mp4', type: 'video', alt: 'Processo de desenhos', category: 'Processo' },
-    { src: '/arruas2.mp4', type: 'video', alt: 'Processo de tatuagem com cliente', category: 'Processo' },
-    { src: '/arruas3.mp4', type: 'video', alt: 'Detalhe da técnica de hachura', category: 'Processo' },
-    { src: '/arruas4.mp4', type: 'video', alt: 'Finalização de tatuagem', category: 'Processo' },
-    { src: '/arruas5.mp4', type: 'video', alt: 'Realismo em tempo real', category: 'Processo' },
-    { src: '/arruas6.mp4', type: 'video', alt: 'Ambiente do estúdio', category: 'Estúdio' },
-    { src: '/arruas7.mp4', type: 'video', alt: 'Técnica avançada de Realismo', category: 'Processo' },
-    { src: '/arruas8.mp4', type: 'video', alt: 'Processo criativo', category: 'Processo' },
-    { src: '/arruas9.mp4', type: 'video', alt: 'Tatuagem realista detalhe', category: 'Processo' },
-    { src: '/arruas10.mp4', type: 'video', alt: 'Workflow profissional', category: 'Processo' },
-    { src: '/arruas11.mp4', type: 'video', alt: 'Detalhes de acabamento', category: 'Processo' },
-    { src: '/arruas12.mp4', type: 'video', alt: 'Técnica de sombreamento', category: 'Processo' },
-    { src: '/arruas13.mp4', type: 'video', alt: 'Processo de cicatrização', category: 'Processo' },
-    { src: '/arruas14.mp4', type: 'video', alt: 'Demonstração de habilidade', category: 'Processo' },
-    { src: '/arruas15.mp4', type: 'video', alt: 'Trabalho finalizado', category: 'Processo' },
-    { src: '/arruas16.mp4', type: 'video', alt: 'Showreel - Melhores Momentos', category: 'Showreel' },
-]
-
-// Componente para o número animado
-function AnimatedCounter({ target, suffix = '', duration = 2 }: { target: number, suffix?: string, duration?: number }) {
-    const [count, setCount] = useState(0)
-    const elementRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    let start = 0
-                    const increment = target / (duration * 60)
-
-                    const timer = setInterval(() => {
-                        start += increment
-                        if (start >= target) {
-                            setCount(target)
-                            clearInterval(timer)
-                        } else {
-                            setCount(Math.floor(start))
-                        }
-                    }, 1000 / 60)
-
-                    return () => clearInterval(timer)
-                }
-            },
-            { threshold: 0.3 }
-        )
-
-        if (elementRef.current) {
-            observer.observe(elementRef.current)
-        }
-
-        return () => observer.disconnect()
-    }, [target, duration])
-
-    return (
-        <div ref={elementRef} className="text-2xl md:text-3xl font-light text-white">
-            {count}{suffix}
-        </div>
-    )
+if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger, useGSAP)
 }
 
-export default function PortfolioModerno() {
-    const containerRef = useRef<HTMLDivElement>(null)
-    const heroVideoRef = useRef<HTMLVideoElement>(null)
-    const [selectedMedia, setSelectedMedia] = useState<any>(null)
-    const [isMuted, setIsMuted] = useState(true)
-    const [isHeroPlaying, setIsHeroPlaying] = useState(true)
-    const videoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({})
-    const [visibleVideos, setVisibleVideos] = useState<Set<string>>(new Set())
+// 📸 LISTA DE FOTOS PARA O SLIDER DO TOPO
+const heroImages = [
+    '/filhosdanacao3.webp', 
+    '/filhosdanacao.webp', 
+    '/filhosNacao2.jpeg', 
+]
 
-    const toggleHeroPlay = () => {
-        if (heroVideoRef.current) {
-            if (isHeroPlaying) {
-                heroVideoRef.current.pause()
-            } else {
-                heroVideoRef.current.play()
-            }
-            setIsHeroPlaying(!isHeroPlaying)
-        }
-    }
+export default function ProjetoPage() {
+    const containerRef = useRef<HTMLElement>(null)
+    const [currentImage, setCurrentImage] = useState(0)
 
-    // Observer para vídeos visíveis
+    // Efeito para trocar a foto de fundo automaticamente (Slider)
     useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach(entry => {
-                    const videoId = entry.target.getAttribute('data-video-id')
-                    if (!videoId) return
-
-                    if (entry.isIntersecting) {
-                        setVisibleVideos(prev => new Set(prev).add(videoId))
-                    } else {
-                        setVisibleVideos(prev => {
-                            const newSet = new Set(prev)
-                            newSet.delete(videoId)
-                            return newSet
-                        })
-                    }
-                })
-            },
-            { threshold: 0.3 }
-        )
-
-        Object.values(videoRefs.current).forEach(video => {
-            if (video) observer.observe(video)
-        })
-
-        return () => observer.disconnect()
+        const timer = setInterval(() => {
+            setCurrentImage((prev) => (prev + 1) % heroImages.length)
+        }, 5000) 
+        return () => clearInterval(timer)
     }, [])
 
-    // Controlar play/pause dos vídeos baseado na visibilidade
     useEffect(() => {
-        Object.entries(videoRefs.current).forEach(([id, video]) => {
-            if (video) {
-                if (visibleVideos.has(id)) {
-                    video.play().catch(() => { })
-                } else {
-                    video.pause()
-                }
-            }
-        })
-    }, [visibleVideos])
-
-    useEffect(() => {
-        if (!containerRef.current) return
-
-        const cards = containerRef.current.querySelectorAll('.media-card')
-        gsap.fromTo(cards,
-            {
-                opacity: 0,
-                y: 40,
-            },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                stagger: 0.08,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: 'top 85%',
-                    toggleActions: 'play none none reverse'
-                }
-            }
-        )
+        AOS.init({ duration: 1000, once: true, easing: 'ease-out-cubic' })
     }, [])
 
-    const openModal = (media: any) => {
-        setSelectedMedia(media)
-        document.body.style.overflow = 'hidden'
-    }
-
-    const closeModal = () => {
-        setSelectedMedia(null)
-        document.body.style.overflow = 'unset'
-    }
-
-    const toggleMute = () => {
-        setIsMuted(!isMuted)
-    }
+    useGSAP(() => {
+        // Efeito Parallax no container das imagens
+        gsap.to('.hero-parallax-container', {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: {
+                trigger: '.hero-container',
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        })
+    }, { scope: containerRef })
 
     return (
-        <div className="min-h-screen bg-black text-white">
-            {/* Hero Section Compacta */}
-            <section className="relative h-[60vh] md:h-[70vh] flex items-end pb-12 md:pb-16 overflow-hidden">
-                <video
-                    ref={heroVideoRef}
-                    src="/arruas16.mp4"
-                    className="absolute inset-0 w-full h-full object-cover"
-                    autoPlay
-                    muted={isMuted}
-                    loop
-                    playsInline
-                />
+        <main ref={containerRef} className="min-h-screen bg-zinc-950 text-white pt-20 overflow-hidden">
+            
+            {/* 1. HERO SECTION COM SLIDER DE FOTOS E LOGO FDN PURA */}
+            <section className="hero-container relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden border-b border-white/10">
+                
+                {/* Container das Imagens (Slider + Parallax) */}
+                <div className="hero-parallax-container absolute inset-0 z-0 bg-black h-[120%] -top-[10%]">
+                    {heroImages.map((img, index) => (
+                        <Image 
+                            key={img}
+                            src={img} 
+                            alt={`Projeto Filhos da Nação - Imagem ${index + 1}`}
+                            fill
+                            priority={index === 0} 
+                            className={`
+                                object-cover transition-opacity duration-[2000ms] ease-in-out
+                                ${index === currentImage ? 'opacity-50' : 'opacity-0'}
+                            `}
+                        />
+                    ))}
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent pointer-events-none" />
+                </div>
 
-                {/* Overlay gradiente */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-
-                {/* Conteúdo do Hero */}
-                <div className="relative z-10 w-full px-4 max-w-4xl mx-auto">
-                    <div className="flex items-end justify-between">
-                        <div className="flex-1">
-                            <h1 className="text-4xl md:text-5xl font-light mb-2 tracking-tight">
-                                Ricardo Arruas
-                            </h1>
-                            <p className="text-gray-300 text-sm md:text-base font-light mb-6">
-                                Tatuador • Especialista em Realismo
-                            </p>
-                            <div className="flex flex-wrap gap-3">
-                                <a
-                                    href="https://wa.me/5561995668686"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="px-4 py-2 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
-                                >
-                                    <WhatsappLogo size={16} />
-                                    Agendar Tattoo
-                                </a>
-                                <button
-                                    onClick={toggleMute}
-                                    className="p-2 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all"
-                                >
-                                    {isMuted ? <SpeakerSimpleX size={16} /> : <SpeakerSimpleHigh size={16} />}
-                                </button>
-                            </div>
+                <div className="relative z-10 container mx-auto px-4 md:px-8 pt-28 pb-20">
+                    <div className="max-w-4xl" data-aos="fade-up">
+                        
+                        {/* Tag de Destaque */}
+                        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-teal-500/20 border border-teal-500/30 text-teal-300 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-md hover:bg-teal-500/30 transition-colors">
+                            <Heart weight="fill" className="w-4 h-4" />
+                            Projeto Principal
                         </div>
 
-                        {/* Logo */}
-                        <div className="hidden md:block relative w-16 h-16 opacity-90">
-                            <Image
-                                src="/4.png"
-                                alt="Arruas Tattoo"
-                                fill
-                                className="object-contain"
+                        {/* 📸 🔥 EXIBIÇÃO DA LOGO PURA E NÍTIDA (FDNLOGO.PNG) 🔥 📸 */}
+                        {/* Adicionei 'bg-white', 'rounded-2xl', e 'p-4' para criar um cartão branco puro */}
+                        {/* onde a logo escura original flutua com nitidez máxima, sem filtros CSS ou sombras. */}
+                        <div className="relative w-40 h-40 md:w-48 md:h-48 mb-8 transition-transform duration-500 hover:scale-105 bg-white rounded-2xl p-4 shadow-xl">
+                            <Image 
+                                src="/fdnlogo.png" // USANDO A SUA IMAGEM ATUALIZADA
+                                alt="Logo Oficial Filhos da Nação" 
+                                fill 
+                                priority
+                                className="object-contain" // APENAS object-contain, SEM filtros ou drop-shadow
                             />
                         </div>
-                    </div>
-                </div>
 
-                {/* Scroll indicator */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <div className="animate-bounce">
-                        <ArrowDown size={20} className="text-white/60" />
-                    </div>
-                </div>
-            </section>
-
-            {/* Estatísticas Minimalistas */}
-            <section className="py-8 md:py-12 border-b border-gray-800">
-                <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-2xl mx-auto">
-                        {[
-                            { number: 8, suffix: '+', label: 'Anos de Experiência', duration: 2 },
-                            { number: 500, suffix: '+', label: 'Tatuagens Realizadas', duration: 2.5 },
-                            { number: 100, suffix: '%', label: 'Satisfação do Cliente', duration: 1.5 },
-                            { number: portfolioMedia.length, suffix: '', label: 'Projetos no Portfólio', duration: 3 }
-                        ].map((stat, index) => (
-                            <div key={index} className="text-center">
-                                <AnimatedCounter
-                                    target={stat.number}
-                                    suffix={stat.suffix}
-                                    duration={stat.duration}
-                                />
-                                <div className="text-gray-400 text-xs md:text-sm mt-1 font-light">{stat.label}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Grid de Portfólio */}
-            <section ref={containerRef} className="py-12 md:py-16">
-                <div className="container mx-auto px-4">
-                    {/* Header do Grid */}
-                    <div className="text-center mb-12">
-                        <h2 className="text-2xl md:text-3xl font-light mb-3">Portfólio</h2>
-                        <p className="text-gray-400 max-w-md mx-auto text-sm">
-                            Explore meus trabalhos em realismo e blackwork
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.95] mb-6 drop-shadow-2xl">
+                            Filhos da <span className="text-teal-400">Nação</span>
+                        </h1>
+                        <h2 className="text-2xl md:text-3xl text-zinc-300 font-light mb-8 max-w-2xl leading-snug">
+                            Remoterapia para crianças e adolescentes em acolhimento institucional.
+                        </h2>
+                        <p className="text-lg text-zinc-400 leading-relaxed max-w-3xl mb-12 font-light">
+                            Uma tecnologia social que integra, resgata sonhos e cria oportunidades de futuro. Por meio da prática do stand up paddle e da canoa havaiana, combinados com os princípios da psicologia junguiana, trabalhamos questões emocionais como autoestima, confiança, superação de medos e fortalecimento de vínculos.
                         </p>
-                    </div>
-
-                    {/* Grid Responsivo */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                        {portfolioMedia.map((media, index) => (
-                            <div
-                                key={`${media.src}-${index}`}
-                                className="media-card group relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer aspect-square"
-                                onClick={() => openModal(media)}
-                            >
-                                {/* Overlay sutil */}
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 z-10"></div>
-
-                                {/* Badge de categoria */}
-                                <div className="absolute top-3 left-3 z-20">
-                                    <span className="px-2 py-1 bg-black/80 backdrop-blur-sm text-white text-xs rounded-full">
-                                        {media.category}
-                                    </span>
-                                </div>
-
-                                {/* Ícone de play para vídeos */}
-                                {media.type === 'video' && (
-                                    <div className="absolute inset-0 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center">
-                                            <Play size={20} weight="fill" className="text-black ml-0.5" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Conteúdo de mídia */}
-                                {media.type === 'image' ? (
-                                    <div className="relative w-full h-full">
-                                        <Image
-                                            src={media.src}
-                                            alt={media.alt}
-                                            fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                    </div>
-                                ) : (
-                                    <video
-                                        ref={el => {
-                                            if (el) videoRefs.current[media.src] = el
-                                        }}
-                                        data-video-id={media.src}
-                                        src={media.src}
-                                        className="w-full h-full object-cover"
-                                        muted={isMuted}
-                                        loop
-                                        playsInline
-                                    />
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Modal */}
-            {selectedMedia && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4"
-                    onClick={closeModal}
-                >
-                    <div
-                        className="relative max-w-4xl w-full max-h-[90vh]"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={closeModal}
-                            className="absolute -top-12 right-0 z-50 p-2 text-white/80 hover:text-white transition-colors"
-                        >
-                            <X size={24} />
-                        </button>
-
-                        {selectedMedia.type === 'video' && (
-                            <div className="absolute top-4 left-4 z-50">
-                                <button
-                                    onClick={toggleMute}
-                                    className="p-2 bg-black/50 backdrop-blur-sm rounded-full text-white/80 hover:text-white transition-colors"
-                                >
-                                    {isMuted ? <SpeakerSimpleX size={20} /> : <SpeakerSimpleHigh size={20} />}
-                                </button>
-                            </div>
-                        )}
-
-                        <div className="bg-gray-900 rounded-xl overflow-hidden">
-                            {selectedMedia.type === 'image' ? (
-                                <div className="relative w-full h-[70vh]">
-                                    <Image
-                                        src={selectedMedia.src}
-                                        alt={selectedMedia.alt}
-                                        fill
-                                        className="object-contain"
-                                    />
-                                </div>
-                            ) : (
-                                <video
-                                    src={selectedMedia.src}
-                                    className="w-full h-[70vh] object-contain"
-                                    autoPlay
-                                    muted={isMuted}
-                                    controls
-                                    loop
-                                />
-                            )}
-
-                            <div className="p-6 border-t border-gray-800">
-                                <div className="flex flex-wrap items-center gap-2 mb-3">
-                                    <span className="px-2 py-1 bg-white text-black text-xs font-medium rounded">
-                                        {selectedMedia.category}
-                                    </span>
-                                    <span className="text-gray-400 text-xs">
-                                        {selectedMedia.type === 'video' ? 'Vídeo' : 'Imagem'}
-                                    </span>
-                                </div>
-                                <p className="text-white text-sm">{selectedMedia.alt}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Footer Minimalista */}
-            <footer className="border-t border-gray-800 py-12">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-4">
-                            <div className="relative w-12 h-12">
-                                <Image
-                                    src="/4.png"
-                                    alt="Arruas Tattoo"
-                                    fill
-                                    className="object-contain opacity-80"
-                                />
+                        
+                        {/* Números de Impacto */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-white/10 mb-12">
+                            <div>
+                                <p className="text-4xl font-black text-white">+300</p>
+                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Jovens/ano</p>
                             </div>
                             <div>
-                                <h3 className="text-lg font-light">Ricardo Arruas</h3>
-                                <p className="text-gray-400 text-sm">Tatuador Profissional</p>
+                                <p className="text-4xl font-black text-teal-400">+4.5k</p>
+                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Impactados</p>
+                            </div>
+                            <div>
+                                <p className="text-4xl font-black text-cyan-400">+200</p>
+                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Voluntários</p>
+                            </div>
+                            <div>
+                                <p className="text-4xl font-black text-white">2017</p>
+                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Fundação</p>
                             </div>
                         </div>
 
-                        <div className="flex gap-4">
-                            <a
-                                href="https://www.instagram.com/arruas_tattoo"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors"
-                            >
-                                <InstagramLogo size={20} />
-                            </a>
-                            <a
-                                href="https://wa.me/5561995668686"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-3 bg-green-600 rounded-full hover:bg-green-700 transition-colors"
-                            >
-                                <WhatsappLogo size={20} />
-                            </a>
+                        {/* Indicadores do Slider (Bolinhas) */}
+                        <div className="flex gap-2">
+                            {heroImages.map((_, index) => (
+                                <div 
+                                    key={index} 
+                                    className={`h-1.5 rounded-full transition-all duration-500 ${index === currentImage ? 'w-8 bg-teal-400' : 'w-2 bg-white/20'}`}
+                                />
+                            ))}
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <div className="text-center mt-8 pt-8 border-t border-gray-800">
-                        <p className="text-gray-400 text-sm">
-                            © {new Date().getFullYear()} Ricardo Arruas. Todos os direitos reservados.
+            {/* 2. OUTRAS ONDAS DE SUPERAÇÃO (Grid de Projetos) */}
+            <section id="outros-projetos" className="py-24 px-4 md:px-8 bg-zinc-950 border-b border-white/5">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16" data-aos="fade-down">
+                        <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
+                            Ondas de <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Superação</span>
+                        </h2>
+                        <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
+                            Além do nosso projeto principal, desenvolvemos iniciativas que conectam experiência em campo, inovação e transformação.
                         </p>
                     </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* Remo do Mundo */}
+                        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group" data-aos="fade-up" data-aos-delay="100">
+                            <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
+                                <GlobeHemisphereWest weight="duotone" className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4 text-white">Remo do Mundo</h3>
+                            <p className="text-zinc-400 font-light leading-relaxed text-sm mb-6">
+                                Promove a integração de indígenas venezuelanos da etnia Warao (o "povo da canoa"). Utilizamos a canoa havaiana como resgate cultural, inclusão social e fortalecimento comunitário. Projeto viabilizado com a ONU Migração.
+                            </p>
+                        </div>
+
+                        {/* Movimento Sou Onda */}
+                        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group" data-aos="fade-up" data-aos-delay="200">
+                            <div className="w-14 h-14 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-6 text-pink-400 group-hover:scale-110 transition-transform">
+                                <HandHeart weight="duotone" className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4 text-white">Movimento Sou Onda</h3>
+                            <p className="text-zinc-400 font-light leading-relaxed text-sm mb-6">
+                                Círculo feminino que une empoderamento, canoa havaiana e Arte Intuitiva (2024). Um momento de autoconhecimento e cura profunda com a natureza, em parceria com a Casa Ponte e a artista Christiane Atta.
+                            </p>
+                        </div>
+
+                        {/* RemoDay Empresarial */}
+                        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group" data-aos="fade-up" data-aos-delay="300">
+                            <div className="w-14 h-14 bg-teal-500/20 rounded-2xl flex items-center justify-center mb-6 text-teal-400 group-hover:scale-110 transition-transform">
+                                <Briefcase weight="duotone" className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4 text-white">RemoDay Empresarial</h3>
+                            <p className="text-zinc-400 font-light leading-relaxed text-sm mb-6">
+                                Metodologia de team building 'SyncPaddle'. Combina remo com Psicologia Analítica para melhorar comunicação, engajamento e clima organizacional. Mais de 20 empresas do DF já viveram essa experiência.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </footer>
-        </div>
+            </section>
+
+            {/* 3. RECONHECIMENTOS E PRÊMIOS (Sessão de Autoridade) */}
+            <section id="reconhecimentos" className="py-24 px-4 md:px-8 bg-gradient-to-b from-zinc-950 to-zinc-900 relative overflow-hidden">
+                {/* Efeito Glow no fundo */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-600/10 blur-[150px] rounded-full pointer-events-none" />
+
+                <div className="max-w-6xl mx-auto relative z-10">
+                    <div className="text-center mb-16" data-aos="fade-up">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
+                            <Medal weight="fill" className="w-4 h-4" />
+                            Excelência e Validação
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">Reconhecimento de Impacto</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        
+                        {/* Sebrae */}
+                        <div className="p-8 md:p-10 bg-zinc-950 border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-8 items-start group hover:border-yellow-500/20 transition-colors" data-aos="fade-right">
+                            <div className="shrink-0 w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-[0_0_30px_rgba(250,204,21,0.3)] group-hover:scale-110 transition-transform">
+                                <Star weight="fill" className="w-10 h-10 text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Prêmio Sebrae Mulher de Negócios 2024</h3>
+                                <p className="text-zinc-400 font-light leading-relaxed">
+                                    <strong className="text-zinc-200">1º lugar na Categoria Pequenos Negócios.</strong> Conquistado por Gabriela Speziali, validando o trabalho realizado através da RemoTerapia e projetos transformadores que geram oportunidades reais nas comunidades.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Impact Innovation Latam */}
+                        <div className="p-8 md:p-10 bg-zinc-950 border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row gap-8 items-start group hover:border-teal-500/20 transition-colors" data-aos="fade-left">
+                            <div className="shrink-0 w-20 h-20 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-[0_0_30px_rgba(45,212,191,0.3)] group-hover:scale-110 transition-transform">
+                                <SealCheck weight="fill" className="w-10 h-10 text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Selo Impact Innovation Latam 2024</h3>
+                                <p className="text-zinc-400 font-light leading-relaxed">
+                                    Uma das 98 startups reconhecidas (entre 663 candidatas) pela <strong className="text-zinc-200">Fundação Dom Cabral</strong>. O selo valida nossa capacidade de criar soluções inovadoras que promovem bem-estar, inclusão e cidadania na América Latina.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Outros Selos Menores (Lista) */}
+                        <div className="lg:col-span-2 mt-8 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up">
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition-colors">
+                                <Medal className="w-8 h-8 text-teal-400 shrink-0" />
+                                <span className="text-sm font-medium text-zinc-300">Embaixadora Brazil Conference 2026 (Impacto Social)</span>
+                            </div>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition-colors">
+                                <Users className="w-8 h-8 text-teal-400 shrink-0" />
+                                <span className="text-sm font-medium text-zinc-300">Parcerias Institucionais firmadas com o TJDFT</span>
+                            </div>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex items-center gap-4 hover:bg-white/10 transition-colors">
+                                <SealCheck className="w-8 h-8 text-teal-400 shrink-0" />
+                                <span className="text-sm font-medium text-zinc-300">Selo Social 2026 (Comprovado)</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA PARA PESQUISA */}
+            <section className="py-24 px-4 text-center bg-zinc-900">
+                <p className="text-zinc-400 mb-8 font-light text-lg">Quer entender a fundo a ciência e os dados por trás do nosso impacto?</p>
+                <Link href="/pesquisa">
+                    <button className="inline-flex items-center gap-3 px-10 py-5 bg-teal-500 hover:bg-teal-400 text-zinc-950 rounded-full font-black text-lg transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(20,184,166,0.5)]">
+                        Conhecer Nossas Pesquisas
+                        <ArrowRight weight="bold" className="w-5 h-5" />
+                    </button>
+                </Link>
+            </section>
+
+        </main>
     )
 }

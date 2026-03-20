@@ -156,31 +156,36 @@ export default function MetodologiaPage() {
                 </div>
             </section>
 
-            {/* 🔥 3. NOVA SEÇÃO FINAL: IMAGEM COM BOTÃO INSTAGRAM 🔥 */}
-            <section className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
-                {/* Imagem de Fundo Pura e Nítida */}
+            {/* 🔥 3. SEÇÃO FINAL REFATORADA: AMPLIANDO A VISÃO DA FOTO 🔥 */}
+            {/* Aumentei a altura md:h-[80vh] para md:h-[85vh] para esticar a seção verticalmente */}
+            <section className="relative w-full h-[70vh] md:h-[85vh] flex items-center justify-center overflow-hidden">
+                {/* Imagem de Fundo: Mantendo nítida, sem zoom exagerado (scale-110 removido) */}
                 <Image 
                     src="/ondaSup4.jpeg" 
-                    alt="OndaSup em Ação"
+                    alt="OndaSup em Ação - Jornada Real"
                     fill
-                    className="object-cover opacity-60"
+                    className="object-cover opacity-70 transition-transform duration-1000" // Aumentei um pouco a opacidade para 70
+                    priority
                 />
                 
-                {/* Overlay de gradiente para suavizar a transição */}
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-zinc-950 pointer-events-none" />
+                {/* Overlay de gradiente: Refinei para dar o efeito de blur suave e profundidade, sem perder nitidez nos detalhes */}
+                <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-950/20 to-zinc-950/80 pointer-events-none" />
                 
+                {/* Efeito Glow Azul sutil para amasiar a luz */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
+
                 <div className="relative z-10 text-center px-4" data-aos="zoom-in">
-                    <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-8 drop-shadow-2xl">
+                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-10 drop-shadow-3xl leading-[0.95]">
                         Acompanhe nossa <br />
-                        <span className="text-blue-500">Jornada Real</span>
+                        <span className="text-blue-500 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300">Jornada Real</span>
                     </h2>
                     
                     <Link 
                         href="https://www.instagram.com/ondasup" 
                         target="_blank"
-                        className="inline-flex items-center gap-4 bg-white text-zinc-950 font-black px-10 py-5 rounded-full text-lg transition-all hover:scale-110 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] group"
+                        className="inline-flex items-center gap-4 bg-white text-zinc-950 font-black px-12 py-6 rounded-full text-xl transition-all hover:scale-110 hover:shadow-[0_0_50px_rgba(255,255,255,0.4)] group"
                     >
-                        <InstagramLogo weight="fill" className="w-7 h-7 text-zinc-950 group-hover:text-blue-600 transition-colors" />
+                        <InstagramLogo weight="fill" className="w-8 h-8 text-zinc-950 group-hover:text-blue-600 transition-colors" />
                         Siga no Instagram
                     </Link>
                 </div>

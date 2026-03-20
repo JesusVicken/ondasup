@@ -20,13 +20,14 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // 🔥 ROTAS ATUALIZADAS PARA O PADRÃO NEXT.JS (MULTI-PAGE) 🔥
     const links = [
-        { label: 'Início', href: '#inicio' },
-        { label: 'Propósito', href: '#proposito' },
-        { label: 'Metodologia', href: '#metodologia' },
-        { label: 'Projeto', href: '#filhos-da-nacao' },
-        { label: 'Pesquisa', href: '#pesquisa' },
-        { label: 'Soluções', href: '#solucoes' },
+        { label: 'Início', href: '/' }, 
+        { label: 'Propósito', href: '/proposito' },
+        { label: 'Metodologia', href: '/metodologia' },
+        { label: 'Projeto', href: '/projeto' }, // <-- ATENÇÃO AQUI: Mudou de /filhos-da-nacao para /projeto
+        { label: 'Pesquisa', href: '/pesquisa' },
+        { label: 'Soluções', href: '/solucoes' },
     ]
 
     const socialLinks = [
@@ -53,20 +54,19 @@ export default function Header() {
                 }
             `}>
                 <div className="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between h-full">
-                    {/* Logo Dinâmica com Filtro CSS */}
+                    {/* Logo Dinâmica apontando para a Home */}
                     <Link
-                        href="#inicio"
+                        href="/"
                         className="flex items-center h-full relative z-50 transition-transform hover:scale-105 shrink-0"
                     >
                         <Image
-                            src="/ondasupLogo.png" // Usa SEMPRE a mesma imagem original (branca)
+                            src="/ondasupLogo.png" 
                             alt="OndaSup - Soluções em Impacto Social"
                             width={160}
                             height={55}
                             className={`w-auto object-contain transition-all duration-500 ${scrolled ? 'h-10' : 'h-12'}`}
                             priority
                             style={{
-                                // Esse cálculo de CSS Filter transforma o BRANCO puro no VERDE (teal-600: #0d9488)
                                 filter: scrolled 
                                     ? 'brightness(0) saturate(100%) invert(38%) sepia(76%) saturate(449%) hue-rotate(128deg) brightness(96%) contrast(93%)' 
                                     : 'none'
@@ -120,7 +120,8 @@ export default function Header() {
                             ))}
                         </div>
 
-                        <Link href="#contato">
+                        {/* CTA apontando para a rota /contato */}
+                        <Link href="/contato">
                             <Button className={`
                                 font-medium rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg
                                 ${scrolled 
@@ -134,7 +135,7 @@ export default function Header() {
                         </Link>
                     </div>
 
-                    {/* Botão menu mobile (Hamburguer) */}
+                    {/* Botão menu mobile */}
                     <div className="xl:hidden flex items-center relative z-50">
                         <Button
                             variant="ghost"
@@ -220,7 +221,7 @@ export default function Header() {
                                     ))}
                                 </div>
 
-                                <Link href="#contato" onClick={() => setMobileMenuOpen(false)}>
+                                <Link href="/contato" onClick={() => setMobileMenuOpen(false)}>
                                     <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-6 text-lg rounded-xl shadow-lg">
                                         Fale Conosco
                                     </Button>

@@ -25,7 +25,7 @@ export default function Header() {
         { label: 'Início', href: '/' }, 
         { label: 'Propósito', href: '/proposito' },
         { label: 'Metodologia', href: '/metodologia' },
-        { label: 'Projeto', href: '/projeto' }, // <-- ATENÇÃO AQUI: Mudou de /filhos-da-nacao para /projeto
+        { label: 'Projeto', href: '/projeto' }, 
         { label: 'Pesquisa', href: '/pesquisa' },
         { label: 'Soluções', href: '/solucoes' },
     ]
@@ -42,6 +42,11 @@ export default function Header() {
             label: 'LinkedIn'
         }
     ]
+
+    // Número do WhatsApp e Mensagem Padrão
+    const whatsappNumber = "556199791925"
+    const whatsappMessage = "Olá! Gostaria de saber mais sobre a OndaSup."
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
 
     return (
         <>
@@ -120,10 +125,10 @@ export default function Header() {
                             ))}
                         </div>
 
-                        {/* CTA apontando para a rota /contato */}
-                        <Link href="/contato">
+                        {/* 🔥 CTA apontando para o WhatsApp (Desktop) 🔥 */}
+                        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                             <Button className={`
-                                font-medium rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg
+                                font-medium rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg group
                                 ${scrolled 
                                     ? 'bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 text-sm' 
                                     : 'bg-white text-teal-700 hover:bg-slate-100 px-6 py-2.5 text-[15px]'
@@ -132,7 +137,7 @@ export default function Header() {
                                 Fale Conosco
                                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                             </Button>
-                        </Link>
+                        </a>
                     </div>
 
                     {/* Botão menu mobile */}
@@ -221,11 +226,13 @@ export default function Header() {
                                     ))}
                                 </div>
 
-                                <Link href="/contato" onClick={() => setMobileMenuOpen(false)}>
-                                    <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-6 text-lg rounded-xl shadow-lg">
+                                {/* 🔥 CTA apontando para o WhatsApp (Mobile) 🔥 */}
+                                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                                    <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-6 text-lg rounded-xl shadow-lg flex items-center justify-center gap-2">
                                         Fale Conosco
+                                        <ArrowRight size={20} />
                                     </Button>
-                                </Link>
+                                </a>
                             </motion.div>
                         </motion.div>
                     </motion.div>

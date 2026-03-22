@@ -3,11 +3,16 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { WhatsappLogoIcon, CheckCircle, ArrowRight, Medal } from "@phosphor-icons/react/dist/ssr"
+import { WhatsappLogo, CheckCircle, ArrowRight, Medal, SealCheck, RocketLaunch, GraduationCap } from "@phosphor-icons/react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+
+if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger, useGSAP)
+}
 
 const impactPhrases = [
     "Transformando desafios em conquistas.",
@@ -15,6 +20,42 @@ const impactPhrases = [
     "Esporte como ferramenta de pertencimento.",
     "Transformando o impossível em possível.",
     "Gerando impacto e novas oportunidades."
+];
+
+// Nossos Novos Reconhecimentos e Prêmios
+const awards = [
+    {
+        year: "2024",
+        title: "1º Lugar Prêmio Sebrae Mulher de Negócios",
+        icon: Medal,
+        color: "text-amber-400",
+        bg: "from-amber-500/10 via-yellow-400/10 to-amber-500/10",
+        border: "border-amber-400/30"
+    },
+    {
+        year: "2025",
+        title: "Selo Social - ODS 3, 4, 5, 10, 12 e 17",
+        icon: SealCheck,
+        color: "text-emerald-400",
+        bg: "from-emerald-500/10 via-green-400/10 to-emerald-500/10",
+        border: "border-emerald-400/30"
+    },
+    {
+        year: "2025",
+        title: "Top 1000 Startups + Inovadoras do Brasil",
+        icon: RocketLaunch,
+        color: "text-blue-400",
+        bg: "from-blue-500/10 via-cyan-400/10 to-blue-500/10",
+        border: "border-blue-400/30"
+    },
+    {
+        year: "2026",
+        title: "Embaixadora Brazil Conference (Harvard/MIT)",
+        icon: GraduationCap,
+        color: "text-purple-400",
+        bg: "from-purple-500/10 via-pink-400/10 to-purple-500/10",
+        border: "border-purple-400/30"
+    }
 ];
 
 export default function Hero() {
@@ -27,6 +68,17 @@ export default function Hero() {
     const [charIndex, setCharIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    // Estado para o Carrossel de Prêmios
+    const [currentAwardIndex, setCurrentAwardIndex] = useState(0);
+
+    // Rotação dos Prêmios a cada 4 segundos
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentAwardIndex((prev) => (prev + 1) % awards.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, []);
+
     // Efeito de Parallax com GSAP e AOS
     useEffect(() => {
         AOS.init({
@@ -34,24 +86,20 @@ export default function Hero() {
             once: true,
             easing: 'ease-in-out',
         })
-
-        gsap.registerPlugin(ScrollTrigger)
-
-        const ctx = gsap.context(() => {
-            gsap.to(bgRef.current, {
-                y: "15%",
-                ease: "none",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top top",
-                    end: "bottom top",
-                    scrub: true
-                }
-            })
-        }, sectionRef)
-
-        return () => ctx.revert()
     }, [])
+
+    useGSAP(() => {
+        gsap.to(bgRef.current, {
+            y: "15%",
+            ease: "none",
+            scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        })
+    }, { scope: sectionRef })
 
     // Efeito de Digitação (React State)
     useEffect(() => {
@@ -90,11 +138,13 @@ export default function Hero() {
         "Comunicação estratégica"
     ]
 
+    const activeAward = awards[currentAwardIndex];
+
     return (
         <section ref={sectionRef} id="inicio" className="relative w-full h-[85vh] md:h-screen min-h-[750px] flex items-center justify-center lg:justify-start overflow-hidden">
 
             {/* Background Parallax */}
-            <div ref={bgRef} className="absolute inset-[-20%] z-0 bg-slate-900">
+            <div ref={bgRef} className="absolute inset-[-20%] z-0 bg-slate-950">
                 <Image
                     src="/ondaHero.jpeg"
                     alt="OndaSup - Esporte, Pesquisa e Impacto Social"
@@ -104,32 +154,45 @@ export default function Hero() {
                     className="object-cover object-center transform scale-105"
                 />
                 
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
             </div>
 
             {/* Conteúdo Principal */}
             <div className="relative z-10 container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full pt-32 md:pt-40 lg:pt-20">
                 <div className="max-w-3xl text-white space-y-6 md:space-y-8">
                     
-                    {/* Badge do Prêmio Sebrae */}
+                    {/* --- CARROSSEL DE RECONHECIMENTOS (UI Moderna) --- */}
                     <div 
                         data-aos="zoom-in"
                         data-aos-delay="200"
-                        className="inline-flex items-center gap-3 px-4 py-2 md:px-5 md:py-2.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-yellow-400/10 to-amber-500/10 border border-amber-400/30 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.15)] w-fit"
+                        className="h-[60px] md:h-[70px] relative overflow-hidden" // Altura fixa para não empurrar o texto
                     >
-                        <div className="relative flex items-center justify-center">
-                            <div className="absolute inset-0 bg-amber-400 blur-md opacity-60 rounded-full animate-pulse"></div>
-                            <Medal weight="duotone" className="relative z-10 text-amber-400 w-6 h-6 md:w-8 md:h-8 drop-shadow-lg" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-amber-300 text-[9px] md:text-[11px] font-bold tracking-widest uppercase leading-none mb-1">
-                                Reconhecimento 2024
-                            </span>
-                            <span className="text-amber-100 text-xs md:text-sm font-semibold leading-none">
-                                1º Lugar Prêmio Sebrae Mulher de Negócios
-                            </span>
-                        </div>
+                        {awards.map((award, index) => (
+                            <div 
+                                key={index}
+                                className={`absolute top-0 left-0 transition-all duration-500 ease-in-out ${
+                                    index === currentAwardIndex 
+                                    ? 'opacity-100 translate-y-0 pointer-events-auto' 
+                                    : 'opacity-0 translate-y-4 pointer-events-none'
+                                }`}
+                            >
+                                <div className={`inline-flex items-center gap-3 px-4 py-2 md:px-5 md:py-2.5 rounded-2xl bg-gradient-to-r ${award.bg} border ${award.border} backdrop-blur-md shadow-xl w-fit`}>
+                                    <div className="relative flex items-center justify-center">
+                                        <div className={`absolute inset-0 ${award.color.replace('text-', 'bg-')} blur-md opacity-40 rounded-full animate-pulse`}></div>
+                                        <award.icon weight="duotone" className={`relative z-10 ${award.color} w-6 h-6 md:w-8 md:h-8 drop-shadow-lg`} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className={`${award.color} text-[9px] md:text-[11px] font-bold tracking-widest uppercase leading-none mb-1 opacity-90`}>
+                                            Reconhecimento {award.year}
+                                        </span>
+                                        <span className="text-white text-xs md:text-sm font-bold leading-none">
+                                            {award.title}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Título com Digitação via React State */}
@@ -142,8 +205,8 @@ export default function Hero() {
                             <span className="animate-pulse text-teal-400 font-light ml-1 drop-shadow-lg">|</span>
                         </h1>
                         
-                        <p data-aos="fade-up" data-aos-delay="400" className="text-base sm:text-lg md:text-xl text-slate-200 max-w-2xl font-light leading-relaxed">
-                            Plataforma brasileira de soluções em impacto social que integra esporte, produção de conhecimento e comunicação para ampliar oportunidades, fortalecer trajetórias de vida e abrir caminhos para autonomia e inserção social.
+                        <p data-aos="fade-up" data-aos-delay="400" className="text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl font-light leading-relaxed">
+                            A OndaSup é uma plataforma brasileira que integra esporte, desenvolvimento socioemocional, produção de conhecimento e comunicação para ampliar oportunidades, fortalecer trajetórias de vida e abrir caminhos para autonomia e inserção social.
                         </p>
                     </div>
 
@@ -212,7 +275,7 @@ function WhatsAppButton({ isMobile = false }: { isMobile?: boolean }) {
             `}
             aria-label="Fale conosco pelo WhatsApp"
         >
-            <WhatsappLogoIcon weight={isMobile ? "fill" : "regular"} className={isMobile ? "w-8 h-8" : "w-6 h-6 text-[#25D366]"} />
+            <WhatsappLogo weight={isMobile ? "fill" : "regular"} className={isMobile ? "w-8 h-8" : "w-6 h-6 text-[#25D366]"} />
             {!isMobile && "Fale com a gente"}
         </a>
     )

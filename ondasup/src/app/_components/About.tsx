@@ -102,7 +102,7 @@ export function About() {
                                 A Onda é um movimento poderoso que simboliza energia pura, transformação constante e força para seguir adiante.
                             </p>
                             <p className="text-justify lg:text-left">
-                                O nome OndaSup carrega essa simbologia e nosso compromisso inegociável com a <strong className="text-teal-700 font-semibold">superação</strong>. A palavra sup vem de superar: uma ação grandiosa que ultrapassa obstáculos e transforma desafios em conquistas reais. Nascemos para inspirar essa mudança, criando oportunidades de transformação de vidas por meio do esporte, com propósito e alto impacto social.
+                                O nome OndaSup carrega essa simbologia e nosso compromisso inegociável com a <strong className="text-teal-700 font-semibold">superação</strong>. A palavra sup vem de superar: uma ação grandiosa que ultrapassa obstáculos e transforma desafios em conquistas reais. Nascemos para inspirar essa mudança, criando oportunidades de transformação de vidas por meio de uma metodologia integrada, que tem como porta de entrada a remoterapia — uma tecnologia social que desenvolve crianças e adolescentes e estrutura sua transição para a vida adulta com impacto mensurável.
                             </p>
                         </div>
 
@@ -112,7 +112,7 @@ export function About() {
                             <div className="text-center sm:text-left">
                                 <h4 className="font-bold text-slate-950 text-lg sm:text-xl">Liderança com Propósito</h4>
                                 <p className="text-slate-600 text-base mt-1.5">
-                                    Fundada pela jornalista <strong className="text-slate-900">Gabriela Speziali</strong> e pelo repórter fotográfico <strong className="text-slate-900">Tiago Souzza</strong>, a organização atua na interseção entre desenvolvimento humano, narrativa e transformação social.
+                                    Fundada pela jornalista <strong className="text-slate-900">Gabriela Speziali</strong> e pelo repórter fotográfico <strong className="text-slate-900">Tiago Souzza</strong>, o negócio de impacto social atua na interseção entre desenvolvimento humano, narrativa e transformação social.
                                 </p>
                             </div>
                         </div>

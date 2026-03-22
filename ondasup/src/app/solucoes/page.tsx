@@ -47,7 +47,7 @@ export default function SolucoesPage() {
             title: 'Formação e Conteúdo',
             desc: 'Palestras, workshops e programas educacionais focados em desenvolvimento humano e inovação social.',
             icon: GraduationCap,
-            image: '/premioMulher.jpeg',
+            image: '/palestra.jpeg',
             tag: 'Educação'
         }
     ]

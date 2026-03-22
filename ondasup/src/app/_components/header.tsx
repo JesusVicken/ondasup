@@ -25,7 +25,7 @@ export default function Header() {
         { label: 'Início', href: '/' }, 
         { label: 'Propósito', href: '/proposito' },
         { label: 'Metodologia', href: '/metodologia' },
-        { label: 'Projeto', href: '/projeto' }, 
+        { label: 'Projetos', href: '/projeto' }, 
         { label: 'Pesquisa', href: '/pesquisa' },
         { label: 'Soluções', href: '/solucoes' },
     ]

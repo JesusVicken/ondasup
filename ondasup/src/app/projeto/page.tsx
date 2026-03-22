@@ -32,6 +32,7 @@ const heroImages = [
 
 export default function ProjetoPage() {
     const containerRef = useRef<HTMLElement>(null)
+    const countersRef = useRef<HTMLDivElement>(null)
     const [currentImage, setCurrentImage] = useState(0)
 
     useEffect(() => {
@@ -46,6 +47,7 @@ export default function ProjetoPage() {
     }, [])
 
     useGSAP(() => {
+        // Efeito Parallax
         gsap.to('.hero-parallax-container', {
             yPercent: 20,
             ease: "none",
@@ -56,10 +58,41 @@ export default function ProjetoPage() {
                 scrub: true
             }
         })
+
+        // Animação dos Contadores do Topo
+        const counters = gsap.utils.toArray('.contador-projeto')
+        counters.forEach((counter: any) => {
+            const target = parseFloat(counter.getAttribute('data-target'))
+            
+            ScrollTrigger.create({
+                trigger: countersRef.current,
+                start: "top 85%", 
+                onEnter: () => {
+                    gsap.fromTo(counter, 
+                        { innerText: 0 }, 
+                        {
+                            innerText: target,
+                            duration: 2.5,
+                            ease: "power3.out",
+                            snap: { innerText: 1 }, 
+                            onUpdate: function() {
+                                // Formata e adiciona "+" (exceto para o ano de fundação)
+                                const val = Math.ceil(Number(this.targets()[0].innerText))
+                                if(target === 2017) {
+                                    counter.innerHTML = val.toString()
+                                } else {
+                                    counter.innerHTML = "+" + val.toLocaleString('pt-BR')
+                                }
+                            }
+                        }
+                    )
+                }
+            })
+        })
     }, { scope: containerRef })
 
     return (
-        <main ref={containerRef} className="min-h-screen bg-zinc-950 text-white pt-20 overflow-hidden">
+        <main ref={containerRef} className="min-h-screen bg-zinc-950 text-white pt-20 overflow-hidden font-sans">
             
             {/* 1. HERO SECTION: FILHOS DA NAÇÃO */}
             <section className="hero-container relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden border-b border-white/10">
@@ -110,22 +143,30 @@ export default function ProjetoPage() {
                             Uma tecnologia social que integra, resgata sonhos e cria oportunidades de futuro. Por meio da prática do stand up paddle e da canoa havaiana, combinados com os princípios da psicologia junguiana, trabalhamos questões emocionais como autoestima, confiança, superação de medos e fortalecimento de vínculos.
                         </p>
                         
-                        {/* Números de Impacto */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-white/10 mb-12">
+                        {/* Números de Impacto - Refatorado com GSAP */}
+                        <div ref={countersRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-white/10 mb-12">
                             <div>
-                                <p className="text-4xl font-black text-white">+300</p>
-                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Jovens/ano</p>
+                                <p className="text-4xl font-black text-white font-mono">
+                                    <span className="contador-projeto" data-target="750">0</span>
+                                </p>
+                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Crianças Atendidas</p>
                             </div>
                             <div>
-                                <p className="text-4xl font-black text-blue-500">+4.5k</p>
-                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Impactados</p>
+                                <p className="text-4xl font-black text-blue-500 font-mono">
+                                    <span className="contador-projeto" data-target="4500">0</span>
+                                </p>
+                                <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Pessoas Impactadas</p>
                             </div>
                             <div>
-                                <p className="text-4xl font-black text-blue-400">+200</p>
+                                <p className="text-4xl font-black text-blue-400 font-mono">
+                                    <span className="contador-projeto" data-target="250">0</span>
+                                </p>
                                 <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Voluntários</p>
                             </div>
                             <div>
-                                <p className="text-4xl font-black text-white">2017</p>
+                                <p className="text-4xl font-black text-white font-mono">
+                                    <span className="contador-projeto" data-target="2017">0</span>
+                                </p>
                                 <p className="text-sm text-zinc-500 uppercase tracking-widest mt-1">Fundação</p>
                             </div>
                         </div>
@@ -142,63 +183,75 @@ export default function ProjetoPage() {
                 </div>
             </section>
 
-            {/* 2. OUTRAS ONDAS DE SUPERAÇÃO (Cards com as FOTOS que você mandou) */}
-            <section id="outros-projetos" className="py-24 px-4 md:px-8 bg-zinc-950 border-b border-white/5">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16" data-aos="fade-down">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
-                            Ondas de <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-400">Superação</span>
+            {/* 2. OUTRAS ONDAS DE SUPERAÇÃO (Cards com FOTOS MAIORES E MODERNAS) */}
+            <section id="outros-projetos" className="py-24 px-4 md:px-8 bg-zinc-950 border-b border-white/5 relative overflow-hidden">
+                {/* Efeito de luz sutil no fundo */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/5 blur-[150px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="text-center mb-16 md:mb-20" data-aos="fade-down">
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6">
+                            Ondas de <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">Superação</span>
                         </h2>
-                        <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-lg md:text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
                             Além do nosso projeto principal, desenvolvemos iniciativas que conectam experiência em campo, inovação e transformação.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Remo do Mundo - COM FOTO */}
-                        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group hover:border-blue-600/30" data-aos="fade-up" data-aos-delay="100">
-                            <div className="relative w-28 h-28 md:w-28 md:h-28 rounded-full overflow-hidden mb-6 flex items-center justify-center border-2 border-blue-600/30 group-hover:scale-110 transition-transform">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+                        {/* Remo do Mundo */}
+                        <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 lg:p-8 hover:bg-zinc-900/80 transition-all duration-500 hover:-translate-y-2 group hover:border-blue-500/40 shadow-2xl flex flex-col" data-aos="fade-up" data-aos-delay="100">
+                            {/* IMAGEM GRANDE NO CABEÇALHO DO CARD */}
+                            <div className="relative w-full h-56 md:h-64 rounded-[1.5rem] overflow-hidden mb-8 border border-white/5 group-hover:border-blue-500/30 transition-all duration-500 shadow-lg shrink-0">
                                 <Image 
                                     src="/pesquisa.jpeg" 
                                     alt="Remo do Mundo" 
                                     fill 
-                                    className="object-cover" 
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4 text-white tracking-tight">Remo do Mundo</h3>
-                            <p className="text-zinc-400 font-light leading-relaxed text-sm mb-6">
+                            
+                            <h3 className="text-2xl lg:text-3xl font-black mb-4 text-white tracking-tight group-hover:text-blue-400 transition-colors">Remo do Mundo</h3>
+                            <p className="text-zinc-400 font-light leading-relaxed text-sm lg:text-base flex-grow">
                                 Promove a integração de indígenas venezuelanos da etnia Warao (o "povo da canoa"). Utilizamos a canoa havaiana como resgate cultural, inclusão social e fortalecimento comunitário. Projeto viabilizado com a ONU Migração.
                             </p>
                         </div>
 
-                        {/* Movimento Sou Onda - COM FOTO */}
-                        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group hover:border-blue-400/30" data-aos="fade-up" data-aos-delay="200">
-                            <div className="relative w-28 h-28 md:w-28 md:h-28 rounded-full overflow-hidden mb-6 flex items-center justify-center border-2 border-blue-400/30 group-hover:scale-110 transition-transform">
+                        {/* Movimento Sou Onda */}
+                        <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 lg:p-8 hover:bg-zinc-900/80 transition-all duration-500 hover:-translate-y-2 group hover:border-cyan-400/40 shadow-2xl flex flex-col" data-aos="fade-up" data-aos-delay="200">
+                            {/* IMAGEM GRANDE NO CABEÇALHO DO CARD */}
+                            <div className="relative w-full h-56 md:h-64 rounded-[1.5rem] overflow-hidden mb-8 border border-white/5 group-hover:border-cyan-400/30 transition-all duration-500 shadow-lg shrink-0">
                                 <Image 
-                                    src="/souOnda.jpeg" 
+                                    src="/souonda.jpeg" 
                                     alt="Movimento Sou Onda" 
                                     fill 
-                                    className="object-cover" 
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4 text-white tracking-tight">Movimento Sou Onda</h3>
-                            <p className="text-zinc-400 font-light leading-relaxed text-sm mb-6">
+                            
+                            <h3 className="text-2xl lg:text-3xl font-black mb-4 text-white tracking-tight group-hover:text-cyan-400 transition-colors">Movimento Sou Onda</h3>
+                            <p className="text-zinc-400 font-light leading-relaxed text-sm lg:text-base flex-grow">
                                 Círculo feminino que une empoderamento, canoa havaiana e Arte Intuitiva (2024). Um momento de autoconhecimento e cura profunda com a natureza, em parceria com a Casa Ponte e a artista Christiane Atta.
                             </p>
                         </div>
 
-                        {/* RemoDay Empresarial - COM FOTO */}
-                        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 group hover:border-blue-700/40" data-aos="fade-up" data-aos-delay="300">
-                            <div className="relative w-28 h-28 md:w-28 md:h-28 rounded-full overflow-hidden mb-6 flex items-center justify-center border-2 border-blue-700/40 group-hover:scale-110 transition-transform">
+                        {/* RemoDay Empresarial */}
+                        <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 lg:p-8 hover:bg-zinc-900/80 transition-all duration-500 hover:-translate-y-2 group hover:border-blue-600/40 shadow-2xl flex flex-col" data-aos="fade-up" data-aos-delay="300">
+                            {/* IMAGEM GRANDE NO CABEÇALHO DO CARD */}
+                            <div className="relative w-full h-56 md:h-64 rounded-[1.5rem] overflow-hidden mb-8 border border-white/5 group-hover:border-blue-600/30 transition-all duration-500 shadow-lg shrink-0">
                                 <Image 
                                     src="/remoday.jpeg" 
                                     alt="RemoDay Empresarial" 
                                     fill 
-                                    className="object-cover" 
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4 text-white tracking-tight">RemoDay Empresarial</h3>
-                            <p className="text-zinc-400 font-light leading-relaxed text-sm mb-6">
+                            
+                            <h3 className="text-2xl lg:text-3xl font-black mb-4 text-white tracking-tight group-hover:text-blue-500 transition-colors">RemoDay Empresarial</h3>
+                            <p className="text-zinc-400 font-light leading-relaxed text-sm lg:text-base flex-grow">
                                 Metodologia de team building 'SyncPaddle'. Combina remo com Psicologia Analítica para melhorar comunicação, engajamento e clima organizacional. Mais de 20 empresas do DF já viveram essa experiência.
                             </p>
                         </div>
